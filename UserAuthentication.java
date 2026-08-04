@@ -1,37 +1,48 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-public class Main{
+public class UserAuthentication{
     Scanner sc=new Scanner(System.in);
-    class Client{
-        String name;
-        String username;
-        String password;
-        String email;
-        Client(String name, String username, String password, String email) {
+    class User{
+        protected String name;
+        protected String username;
+        protected String password;
+        protected String email;
+        User(String name,String username,String password,String email){
             this.name=name;
             this.username=username;
             this.password=password;
             this.email=email;
         }
-    }
-    class Freelancer{
-        String name;
-        String username;
-        String password;
-        String email;
-        String skills;
-        Freelancer(String name,
-                   String username,
-                   String password,
-                   String email,
-                   String skills) {
-            this.name=name;
-            this.username=username;
-            this.password=password;
-            this.email=email;
-            this.skills=skills;
+        void displayProfile(){
+            System.out.println("Name : "+name);
+            System.out.println("Username : "+username);
+            System.out.println("Email : "+email);
         }
     }
+    class Client extends User{
+    Client(String name,
+           String username,
+           String password,
+           String email){
+        super(name,username,password,email);
+    }
+}
+   class Freelancer extends User{
+    String skills;
+    Freelancer(String name,
+               String username,
+               String password,
+               String email,
+               String skills){
+        super(name,username,password,email);
+        this.skills=skills;
+    }
+    @Override
+    void displayProfile(){
+        super.displayProfile();
+        System.out.println("Skills : "+skills);
+    }
+}
     ArrayList<Client> clients=new ArrayList<>();
     ArrayList<Freelancer> freelancers=new ArrayList<>();
     void displayMainMenu(){
@@ -204,9 +215,7 @@ public class Main{
                 case 1:
                     System.out.println();
                     System.out.println("===== CLIENT PROFILE =====");
-                    System.out.println("Name      : " + client.name);
-                    System.out.println("Username  : " + client.username);
-                    System.out.println("Email     : " + client.email);
+                    client.displayProfile();
                     break;
                 case 2:
                     System.out.println("Logged Out Successfully");
@@ -230,10 +239,7 @@ public class Main{
                 case 1:
                     System.out.println();
                     System.out.println("===== FREELANCER PROFILE =====");
-                    System.out.println("Name      : " + freelancer.name);
-                    System.out.println("Username  : " + freelancer.username);
-                    System.out.println("Email     : " + freelancer.email);
-                    System.out.println("Skills    : " + freelancer.skills);
+                    freelancer.displayProfile();
                     break;
                 case 2:
                     System.out.println("Logged Out Successfully");
@@ -244,12 +250,7 @@ public class Main{
         }
     }
     public static void main(String[] args){
-        Main obj = new Main();
+        UserAuthentication obj = new UserAuthentication();
         obj.displayMainMenu();
-        obj.registerClient();
-        obj.registerFreelancer();
-        obj.login();
-        obj.clientLogin();
-        obj.freelancerLogin();
     }
 }
