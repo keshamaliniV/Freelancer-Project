@@ -82,8 +82,8 @@ update project progress, receive payments.
 
 10. Chosen Technology Stack
 
- Layer: Frontend, Backend , Database , Build Tool.
+ * Layer: Frontend, Backend , Database , Build Tool.
  
- Technology: React.js , Java (SpringBoot) , MySQL , Maven.
+ * Technology: React.js , Java (SpringBoot) , MySQL , Maven.
  
- Purpose: Builds the user interface , Business logic and REST APIs , Stores application data , Dependency and build management.
+ * Purpose: Builds the user interface , Business logic and REST APIs , Stores application data , Dependency and build management.
