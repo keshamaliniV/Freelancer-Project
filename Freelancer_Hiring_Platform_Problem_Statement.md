@@ -81,6 +81,6 @@ No multi-tenant support.
 No external job portal integration.
 
 10. Chosen Technology Stack
- layer: frontend,backend,database,build Tool
- technology: React.js, java(SpringBoot),Mysql,Maven
-purpose: builds the user interface,business logic and REST API,Stores application data
+ Layer: Frontend, Backend , Database , Build Tool.
+ Technology: React.js , Java (SpringBoot) , MySQL , Maven.
+ Purpose: Builds the user interface , Business logic and REST APIs , Stores application data , Dependency and build management.
