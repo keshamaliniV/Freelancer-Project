@@ -33,19 +33,19 @@ ratings and reviews.
 
 6.  Core Entities
 
-User
+* User
 
-Freelancer Profile
+* Freelancer Profile
 
-Project
+* Project
 
-Proposal
+* Proposal
 
-Contract
+* Contract
 
-Payment
+* Payment
 
-Review
+* Review
 
 7.  Roles & Permissions
 
@@ -56,31 +56,34 @@ update project progress, receive payments.
 
 8.  Success Criteria
 
-A client should be able to post a project in under 5 minutes.
+* A client should be able to post a project in under 5 minutes.
 
-A freelancer should be able to submit a proposal in under 2 minutes.
+* A freelancer should be able to submit a proposal in under 2 minutes.
 
-Clients should be able to hire a freelancer within 10 minutes.
+* Clients should be able to hire a freelancer within 10 minutes.
 
-Real-time project status updates and notifications.
+* Real-time project status updates and notifications.
 
-Secure tracking of projects and payments.
+* Secure tracking of projects and payments.
 
 9.  Out of Scope
 
-No real-time video/audio calling.
+* No real-time video/audio calling.
 
-No cryptocurrency or international payment gateway.
+* No cryptocurrency or international payment gateway.
 
-No AI-based recommendation.
+* No AI-based recommendation.
 
-Web application only.
+* Web application only.
 
-No multi-tenant support.
+* No multi-tenant support.
 
-No external job portal integration.
+* No external job portal integration.
 
 10. Chosen Technology Stack
+
  Layer: Frontend, Backend , Database , Build Tool.
+ 
  Technology: React.js , Java (SpringBoot) , MySQL , Maven.
+ 
  Purpose: Builds the user interface , Business logic and REST APIs , Stores application data , Dependency and build management.
