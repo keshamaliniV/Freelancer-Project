@@ -81,3 +81,8 @@ No multi-tenant support.
 No external job portal integration.
 
 10. Chosen Technology Stack
+    Layer        Technology             Purpose
+  Frontend       React.js              Builds the user interface
+  Backend        Java (Spring Boot)     Business logic and REST APIs
+  Database       MySQL                  Stores application data
+  Build Tool     Maven                  Dependency and build management
