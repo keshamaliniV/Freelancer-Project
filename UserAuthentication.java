@@ -1,3 +1,7 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 public class UserAuthentication{
@@ -20,6 +24,8 @@ public class UserAuthentication{
         }
     }
     class Client extends User{
+    String companyName = "";
+    String location = "";
     Client(String name,
            String username,
            String password,
@@ -29,6 +35,8 @@ public class UserAuthentication{
 }
    class Freelancer extends User{
     String skills;
+    String experience = "";
+    String portfolio = "";
     Freelancer(String name,
                String username,
                String password,
@@ -77,16 +85,27 @@ public class UserAuthentication{
         }
     }
     void registerClient(){
+        Connection con=DBConnection.getConnection();
         System.out.println("\n========== CLIENT REGISTRATION ==========");
         System.out.print("Enter Name : ");
         String name=sc.nextLine();
         System.out.print("Enter Username : ");
         String username=sc.nextLine();
-        for(Client c : clients) {
-            if(c.username.equalsIgnoreCase(username)){
-                System.out.println("Username already exists");
-                return;
-            }
+        try{
+           String sql="SELECT username FROM users WHERE username = ?";
+           PreparedStatement pst=con.prepareStatement(sql);
+           pst.setString(1, username);
+           ResultSet rs=pst.executeQuery();
+           if(rs.next()){
+            System.out.println("Username already exists in database");
+            return;
+        }
+        rs.close();
+        pst.close();
+        }
+        catch(SQLException e){
+            System.out.println("Database Error");
+            e.printStackTrace();
         }
         System.out.print("Enter Password : ");
         String password=sc.nextLine();
@@ -103,11 +122,27 @@ public class UserAuthentication{
                 password,
                 email
         );
+        try {
+        String sql = "INSERT INTO users (name, username, password, email, role) VALUES (?, ?, ?, ?, 'CLIENT')";
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setString(1, name);
+        pst.setString(2, username);
+        pst.setString(3, password);
+        pst.setString(4, email);
+        pst.executeUpdate();
+        System.out.println("Client saved to database successfully!");
+        pst.close();
+        }
+        catch(SQLException e){
+        System.out.println("Database Insert Error");
+        e.printStackTrace();
+        }
         clients.add(client);
         System.out.println();
         System.out.println("Client Registered Successfully");
     }
     void registerFreelancer(){
+        Connection con=DBConnection.getConnection();
         System.out.println("\n========== FREELANCER REGISTRATION ==========");
         System.out.print("Enter Name : ");
         String name=sc.nextLine();
@@ -249,8 +284,4 @@ public class UserAuthentication{
             }
         }
     }
-    public static void main(String[] args){
-        UserAuthentication obj = new UserAuthentication();
-        obj.displayMainMenu();
-    }
-}
+}    
