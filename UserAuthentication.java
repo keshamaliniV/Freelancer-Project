@@ -5,7 +5,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 public class UserAuthentication{
+    private int loggedInUserId=-1;
     Scanner sc=new Scanner(System.in);
+    public int getLoggedInUserId(){
+    return loggedInUserId;
+    }
     class User{
         protected String name;
         protected String username;
@@ -34,21 +38,32 @@ public class UserAuthentication{
     }
 }
    class Freelancer extends User{
-    String skills;
+    String skills="";
+    String location = "";
     String experience = "";
     String portfolio = "";
     Freelancer(String name,
                String username,
                String password,
                String email,
-               String skills){
+               String skills,
+               String location,
+               String experience,
+               String portfolio
+            ){
         super(name,username,password,email);
         this.skills=skills;
-    }
+        this.location = location;
+        this.experience = experience;
+        this.portfolio = portfolio;
+        }
     @Override
     void displayProfile(){
         super.displayProfile();
         System.out.println("Skills : "+skills);
+        System.out.println("Location : " + location);
+        System.out.println("Experience : " + experience);
+        System.out.println("Portfolio / Projects : " + portfolio);
     }
 }
     ArrayList<Client> clients=new ArrayList<>();
@@ -68,14 +83,20 @@ public class UserAuthentication{
             sc.nextLine();
             switch(choice){
                 case 1:
-                    registerClient();
+                registerClient();
+                if(loggedInUserId>0){
+                    return;
+                }
                     break;
                 case 2:
-                    registerFreelancer();
+                registerFreelancer();
+                if(loggedInUserId>0){
+                    return;
+                }
                     break;
                 case 3:
                     login();
-                    break;
+                    return;
                 case 4:
                     System.out.println("Thank You...");
                     System.exit(0);
@@ -124,22 +145,35 @@ public class UserAuthentication{
         );
         try {
         String sql = "INSERT INTO users (name, username, password, email, role) VALUES (?, ?, ?, ?, 'CLIENT')";
-        PreparedStatement pst = con.prepareStatement(sql);
+        PreparedStatement pst =
+        con.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
         pst.setString(1, name);
         pst.setString(2, username);
         pst.setString(3, password);
         pst.setString(4, email);
         pst.executeUpdate();
-        System.out.println("Client saved to database successfully!");
+        ResultSet keys=pst.getGeneratedKeys();
+        if(keys.next()){
+        loggedInUserId=keys.getInt(1);
+        }
+        keys.close();
         pst.close();
-        }
-        catch(SQLException e){
-        System.out.println("Database Insert Error");
-        e.printStackTrace();
-        }
         clients.add(client);
+        System.out.println("Client saved to database successfully!");
         System.out.println();
         System.out.println("Client Registered Successfully");
+        }
+        catch(SQLException e){
+            if(e.getErrorCode()==1062){
+               System.out.println("Username or Email already exists in database"); 
+            }
+            else{
+                System.out.println("Database Insert Error");
+                e.printStackTrace();
+            }
+            return;
+        }
+        System.out.println();
     }
     void registerFreelancer(){
         Connection con=DBConnection.getConnection();
@@ -165,12 +199,21 @@ public class UserAuthentication{
         String email=sc.nextLine();
         System.out.print("Enter Skills : ");
         String skills=sc.nextLine();
+        System.out.print("Enter Location : ");
+        String location = sc.nextLine();
+        System.out.print("Enter Experience : ");
+        String experience = sc.nextLine();
+        System.out.print("Enter Portfolio / Projects : ");
+        String portfolio = sc.nextLine();
         Freelancer freelancer=new Freelancer(
                 name,
                 username,
                 password,
                 email,
-                skills
+                skills,
+                location,
+                experience,
+                portfolio
         );
         freelancers.add(freelancer);
         System.out.println();
@@ -201,40 +244,64 @@ public class UserAuthentication{
         }
     }
     void clientLogin(){
-        System.out.println("\n========== CLIENT LOGIN ==========");
-        System.out.print("Enter Username : ");
-        String username=sc.nextLine();
-        System.out.print("Enter Password : ");
-        String password=sc.nextLine();
-        for(Client c:clients){
-            if(c.username.equals(username) &&
-               c.password.equals(password)){
-                System.out.println();
-                System.out.println("Login Successful");
-                System.out.println("Welcome " + c.name);
-                clientDashboard(c);
-                return;
-            }
+    System.out.println("\n========== CLIENT LOGIN ==========");
+    System.out.print("Enter Username : ");
+    String username = sc.nextLine();
+    System.out.print("Enter Password : ");
+    String password = sc.nextLine();
+    String sql =
+            "SELECT user_id, name FROM users " +
+            "WHERE username = ? AND password = ? AND role = 'CLIENT'";
+    try(Connection con = DBConnection.getConnection();
+        PreparedStatement ps = con.prepareStatement(sql)){
+        ps.setString(1, username);
+        ps.setString(2, password);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            loggedInUserId = rs.getInt("user_id");
+            String name = rs.getString("name");
+            System.out.println();
+            System.out.println("Login Successful");
+            System.out.println("Welcome " + name);
+            return;
         }
         System.out.println("Invalid Username or Password");
     }
-    void freelancerLogin() {
-        System.out.println("\n========== FREELANCER LOGIN ==========");
-        System.out.print("Enter Username : ");
-        String username=sc.nextLine();
-        System.out.print("Enter Password : ");
-        String password=sc.nextLine();
-        for(Freelancer f:freelancers){
-            if(f.username.equals(username) &&
-               f.password.equals(password)){
-                System.out.println();
-                System.out.println("Login Successful");
-                System.out.println("Welcome " + f.name);
-                freelancerDashboard(f);
-                return;
-            }
+    catch(Exception e){
+        System.out.println("Database Login Error");
+        e.printStackTrace();
+    }
+    }
+    void freelancerLogin(){
+    System.out.println("\n========== FREELANCER LOGIN ==========");
+    System.out.print("Enter Username : ");
+    String username=sc.nextLine();
+    System.out.print("Enter Password : ");
+    String password=sc.nextLine();
+    String sql =
+            "SELECT user_id, name FROM users " +
+            "WHERE username = ? AND password = ? AND role = 'FREELANCER'";
+    try (Connection con = DBConnection.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)){
+        ps.setString(1, username);
+        ps.setString(2, password);
+        ResultSet rs=ps.executeQuery();
+        if(rs.next()){
+            loggedInUserId = rs.getInt("user_id");
+            String name = rs.getString("name");
+            System.out.println();
+            System.out.println("Login Successful");
+            System.out.println("Welcome " + name);
+            ClientFreelancerProfile profile=new ClientFreelancerProfile(this);
+            profile.freelancerModule();
+            return;
         }
         System.out.println("Invalid Username or Password");
+    }
+    catch(Exception e){
+        System.out.println("Database Login Error");
+        e.printStackTrace();
+    }
     }
     void clientDashboard(Client client){
         while(true){
@@ -285,3 +352,4 @@ public class UserAuthentication{
         }
     }
 }    
+

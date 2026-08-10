@@ -1,6 +1,13 @@
 public class Main {
     public static void main(String[] args) {
-        UserAuthentication obj=new UserAuthentication();
-        obj.displayMainMenu();
+        UserAuthentication authentication =
+                new UserAuthentication();
+        ClientFreelancerProfile clientProfile =
+                new ClientFreelancerProfile(authentication);
+        ClientFreelancerProfile freelancerProfile =
+                new ClientFreelancerProfile(authentication);
+        authentication.displayMainMenu();
+        clientProfile.clientModule();
+        freelancerProfile.freelancerModule();
     }
 }
