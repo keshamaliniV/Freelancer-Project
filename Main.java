@@ -1,4 +1,3 @@
-
 public class Main {
     public static void main(String[] args) {
         UserAuthentication authentication =
@@ -14,5 +13,6 @@ public class Main {
         freelancerProfile.freelancerModule();
         jobPosting.displayMenu(1);
         jobBrowsing.displayMenu();
+        JobApplication.main(args);
     }
 }
