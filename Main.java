@@ -1,3 +1,4 @@
+
 public class Main {
     public static void main(String[] args) {
         UserAuthentication authentication =
@@ -6,8 +7,12 @@ public class Main {
                 new ClientFreelancerProfile(authentication);
         ClientFreelancerProfile freelancerProfile =
                 new ClientFreelancerProfile(authentication);
+        JobPosting jobPosting = new JobPosting();
+        JobBrowsing jobBrowsing = new JobBrowsing();
         authentication.displayMainMenu();
         clientProfile.clientModule();
         freelancerProfile.freelancerModule();
+        jobPosting.displayMenu(1);
+        jobBrowsing.displayMenu();
     }
 }
